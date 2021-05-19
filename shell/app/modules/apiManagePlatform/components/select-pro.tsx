@@ -12,9 +12,11 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 import React from 'react';
-// 使用nusi Select, Icon
-import { Modal, NusiSelect as Select, NusiIcon as Icon } from 'app/nusi';
+// 使用antd Select, iconfont Icon
+import { Modal, Select } from 'app/nusi';
+import { Icon } from 'app/common';
 import { SelectProps, ModalProps } from 'core/common/interface';
+import './select-pro.scss';
 
 interface IModalProps<T> extends ModalProps{
   children(data: T[], selectKey: number| undefined, handleChange: (data: number)=>void): React.ReactNode;
@@ -62,17 +64,17 @@ function SelectPro<T, S>({ value, dataSource, children, modalProps, onChange, on
     onChange && onChange(key);
   };
   return (
-    <>
+    <div className="select-pro">
       <Select
         value={v}
         style={{ width: '100%' }}
-        actionIcon={<Icon type="dialog" className="hover-active" />}
-        onActionClick={handleModal}
         onChange={handleChange}
+        getPopupContainer={triggerNode => triggerNode.parentNode}
         {...prop}
       >
         {children}
       </Select>
+      <Icon type="dialog" className="select-pro-icon" onClick={handleModal}/>
       <Modal
         {...modalRest}
         visible={showModal}
@@ -84,9 +86,11 @@ function SelectPro<T, S>({ value, dataSource, children, modalProps, onChange, on
           modalChildren(dataSource, tempV, setTempV)
         }
       </Modal>
-    </>
+    </div>
   );
 }
 SelectPro.Option = Select.Option;
 
 export default SelectPro;
+
+

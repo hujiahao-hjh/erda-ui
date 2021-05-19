@@ -1,0 +1,20 @@
+.select-pro {
+  position: relative;
+
+  .select-pro-icon {
+    position: absolute;
+    right: 11px;
+    top: 50%;
+    margin-top: -6px;
+    color: rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+
+    &:hover {
+      color: #6a549e;
+    }
+  }
+
+  .ant-select-arrow {
+    display: none;
+  }
+}
