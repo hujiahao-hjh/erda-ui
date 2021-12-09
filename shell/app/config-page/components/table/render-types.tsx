@@ -62,6 +62,12 @@ export const getTitleRender = (cItem: CP_TABLE.Column) => {
   return res;
 };
 
+const dropDownHoverBgAndArrow = (
+  <div className="cursor-pointer absolute top-0 left-0 bottom-0 right-0 hover:bg-default-04 opacity-0 hover:opacity-100">
+    <ErdaIcon type="caret-down" size={20} fill="black-300" className="arrow-icon absolute right-2 top-1/3" />
+  </div>
+);
+
 interface IParams {
   record: Obj;
   execOperation: (op: CP_COMMON.Operation) => void;
@@ -148,6 +154,9 @@ export const getRender = (val: any, record: CP_TABLE.RowData, extra: any) => {
       break;
     case 'operationsDropdownMenu': // 下拉菜单的操作：可编辑列
       Comp = <DropdownSelector {...val} {...extra} />;
+      break;
+    case 'dropdownMenu': // 下拉菜单：可编辑列
+      Comp = <DropdownMenu {...val} {...extra} />;
       break;
     case 'progress':
       {
@@ -501,7 +510,6 @@ const DropdownSelector = (props: IDropdownSelectorProps) => {
         {prefixIcon ? <CustomIcon type={prefixIcon} /> : null}
         {value || <span className="text-desc">{i18n.t('unspecified')}</span>}
       </div>
-      <ErdaIcon type="caret-down" size="18" className="arrow-icon" />
     </div>
   );
 
@@ -622,6 +630,48 @@ const getTableOperation = (val: any, record: any, extra: any) => {
         <ErdaIcon type="more" className="cursor-pointer p-1 bg-hover rounded-sm" onClick={(e) => e.stopPropagation()} />
       </Dropdown>
     </div>
+  );
+};
+
+interface DropDownMenuProps {
+  value: string;
+  menus: DropDownMenuItem[];
+  menuItemRender: (item: DropDownMenuItem) => React.ReactNode;
+}
+
+interface DropDownMenuItem {
+  id: string;
+}
+
+const DropdownMenu = (props: DropDownMenuProps) => {
+  const { value, menus, menuItemRender, execOperation } = props;
+
+  const menu = (
+    <Menu>
+      {menus.map((item) => {
+        return (
+          <Menu.Item
+            key={item.id}
+            onClick={(e: any) => {
+              execOperation({ ...item });
+            }}
+          >
+            {menuItemRender(item) || ''}
+          </Menu.Item>
+        );
+      })}
+    </Menu>
+  );
+
+  const current = menus.find((item) => item.id === value);
+  const ValueRender = current ? menuItemRender(current) : value;
+  return (
+    <Dropdown overlay={menu} trigger={['click']}>
+      <div>
+        {ValueRender}
+        {dropDownHoverBgAndArrow}
+      </div>
+    </Dropdown>
   );
 };
 
