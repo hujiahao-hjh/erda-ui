@@ -62,7 +62,13 @@ const promiseDebounce = (func: Function, delay = 1000) => {
 
 const { Dragger } = Upload;
 
-const ReleaseForm = ({ readyOnly = false }: { readyOnly?: boolean }) => {
+const ReleaseForm = ({
+  readyOnly = false,
+  releaseDetail: _releaseDetail,
+}: {
+  readyOnly?: boolean;
+  releaseDetail?: RELEASE.ReleaseDetail;
+}) => {
   const formRef = React.useRef<FormInstance>();
   const { params } = routeInfoStore.getState((s) => s);
   const { projectId, releaseID, type = 'app' } = params;
@@ -78,7 +84,6 @@ const ReleaseForm = ({ readyOnly = false }: { readyOnly?: boolean }) => {
   const [releaseList, setReleaseList] = React.useState<RELEASE.ReleaseDetail[]>([] as RELEASE.ReleaseDetail[]);
   const [releaseTotal, setReleaseTotal] = React.useState(0);
 
-  const _releaseDetail = getReleaseDetail.useData();
   const releaseDetail = React.useMemo(() => {
     return {
       ..._releaseDetail,
@@ -88,16 +93,6 @@ const ReleaseForm = ({ readyOnly = false }: { readyOnly?: boolean }) => {
       })),
     };
   }, [_releaseDetail]);
-
-  const getDetail = React.useCallback(async () => {
-    if (releaseID) {
-      await getReleaseDetail.fetch({ releaseID });
-    }
-  }, [releaseID]);
-
-  React.useEffect(() => {
-    getDetail();
-  }, [getDetail]);
 
   React.useEffect(() => {
     formRef.current?.setFieldsValue(releaseDetail);

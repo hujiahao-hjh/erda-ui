@@ -22,16 +22,12 @@ import { getReleaseDetail, formalRelease } from 'project/services/release';
 const ReleaseProjectDetail = () => {
   const { params } = routeInfoStore.getState((s) => s);
   const { releaseID } = params;
-  const [isFormal, setIsFormal] = React.useState(false);
-  const [releaseName, setReleaseName] = React.useState('');
+  const releaseDetail = getReleaseDetail.useData() || ({} as RELEASE.ReleaseDetail);
+  const { isFormal, releaseName } = releaseDetail;
+
   const getDetail = React.useCallback(async () => {
     if (releaseID) {
-      const res = await getReleaseDetail.fetch({ releaseID });
-      if (res.data) {
-        const { data } = res;
-        setIsFormal(data.isFormal);
-        setReleaseName(data.version);
-      }
+      await getReleaseDetail.fetch({ releaseID });
     }
   }, [releaseID]);
 
@@ -57,7 +53,7 @@ const ReleaseProjectDetail = () => {
 
   return (
     <div>
-      <ReleaseForm readyOnly />
+      <ReleaseForm readyOnly releaseDetail={releaseDetail} />
       <div className="mb-2">
         {!isFormal ? (
           <Button className="mr-3 bg-default" type="primary" onClick={submit}>
