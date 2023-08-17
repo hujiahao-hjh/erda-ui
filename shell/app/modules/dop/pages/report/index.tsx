@@ -62,22 +62,30 @@ const ProjectReport = () => {
 
   const loadData = async (params: Obj) => {
     setLoading(true);
-    const payload = {
-      orgId,
-      ...params,
-    };
-    const res = await getReports(payload);
+    try {
+      const payload = {
+        orgId,
+        ...params,
+      };
+      const res = await getReports(payload);
 
-    if (res.success) {
-      const list = [] as listItem[];
-      res.data?.reverse()?.forEach((item) => {
-        if (!list.find((report) => report.projectID === item.projectID)) {
-          list.push({ ...item, chart: [item] });
-        } else {
-          list.find((report) => report.projectID === item.projectID)?.chart.push(item);
-        }
-      });
-      setData(list.reverse()?.map((item) => ({ ...item, chart: item.chart.reverse() })));
+      if (res.success) {
+        const list = [] as listItem[];
+        res.data?.reverse()?.forEach((item) => {
+          if (!list.find((report) => report.projectID === item.projectID)) {
+            list.push({ ...item, chart: [item] });
+          } else {
+            list.find((report) => report.projectID === item.projectID)?.chart.push(item);
+          }
+        });
+        setData(list.reverse()?.map((item) => ({ ...item, chart: item.chart.reverse() })));
+        setLoading(false);
+      } else {
+        setData([]);
+        setLoading(false);
+      }
+    } catch (error) {
+      setData([]);
       setLoading(false);
     }
   };
